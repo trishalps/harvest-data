@@ -1,6 +1,7 @@
 package com.interview.harvestdata;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,7 +30,7 @@ public class HarvestDataApplication {
 		try {
 			mapDataFromFile(fileOveride);
 			mapDataFromFile(fileOriginal);
-			//mapDataFromFile(fileValidation);
+			mapDataFromFile(fileValidation);
 			updateWeightAsPercentage(harvestData);
 			printOutput();
 		} catch (Exception e) {
@@ -118,10 +121,12 @@ public class HarvestDataApplication {
 	
 	/**
 	 * this method will display the output data and also the error messages if any
+	 * @throws IOException 
+	 * @throws SecurityException 
 	 * 
 	 */
-	private static void printOutput() {
-		printErrorMessages(validator);
+	private static void printOutput() throws SecurityException, IOException {
+		logErrorMessages(validator);
 		System.out.println(harvestData.toString());
 
 	}
@@ -129,11 +134,18 @@ public class HarvestDataApplication {
 	/**
 	 * this method retrieves all the error messages added during validation and displays it
 	 * @param aValidator 
+	 * @throws IOException 
+	 * @throws SecurityException 
 	 */
-	private static void printErrorMessages(InputDataValidator aValidator) {
+	private static void logErrorMessages(InputDataValidator aValidator) throws SecurityException, IOException {
 		List<String> errors = (List<String>) aValidator.getErrors();
+		File f = new File("log.txt");
+		FileHandler fh = new FileHandler("log.txt",true);
+		Logger myLog = Logger.getLogger("test");
+		myLog.addHandler(fh);
 		for (String e : errors) {
-			System.out.println(e);
+//			System.out.println(e);
+			myLog.warning(e);
 		}
 
 	}
